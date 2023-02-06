@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "413926153217",
+    "project_id": "catch-the-word-39605",
+    "storage_bucket": "catch-the-word-39605.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:413926153217:android:0ca00cdf646d3d97e43400",
+        "android_client_info": {
+          "package_name": "com.example.catch_the_word"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "413926153217-kb7mpa82a76eq9ktdbttg6l1j4lvp6lq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.catch_the_word",
+            "certificate_hash": "e7b166356673440f040827275ba523fc5692d6db"
+          }
+        },
+        {
+          "client_id": "413926153217-eos07o42m05g0ms5r4smjub85g10ttj7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBOTpb1BJD5AURhaVrh7qrZxH0IFJRmeEM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "413926153217-eos07o42m05g0ms5r4smjub85g10ttj7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
