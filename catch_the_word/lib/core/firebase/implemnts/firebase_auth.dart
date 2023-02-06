@@ -15,14 +15,14 @@ class FirebaseAuthService implements IFirebaseAuthService {
   static final _firestore = FirebaseFirestore.instance;
   @override
   Future<void> signIn(String email, String password) async {
-    try {
-      final credential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
+    final credential = await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: password)
+        .then((user) async {
+      await _createUser(user.user!);
       Get.toNamed(MyRouter.draw);
-    } on FirebaseAuthException catch (e) {
-      Get.snackbar("Login failed!", e.code);
-      print('e.code');
-    }
+    }).catchError((onError) {
+      Get.snackbar("SignUp failed!", onError);
+    });
   }
 
   @override
@@ -31,25 +31,27 @@ class FirebaseAuthService implements IFirebaseAuthService {
     await _firebaseAuth
         .createUserWithEmailAndPassword(email: email, password: password)
         .then((user) async {
-      await _createUser(user.user!.uid, name, phoneNumber, birth);
+      await _createUser(user.user!);
     }).catchError((onError) {
       Get.snackbar("SignUp failed!", onError);
     });
   }
 
-  Future<void> _createUser(
-      String userId, String name, String? phoneNumber, String birth) async {
-    await _firestore.collection("users").add({
-      "userId": userId,
-      "name": name,
-      "phoneNumber": phoneNumber ?? "",
-      "birth": birth,
-      'createTime': DateTime.now(),
+  Future<void> _createUser(User userCredential) async {
+    await _firestore.collection('users').doc(userCredential.uid).set({
+      'name': userCredential.displayName,
+      'photoUrl': userCredential.photoURL,
+      'uid': userCredential.uid,
+      'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
     }).then((value) async {
       Get.toNamed(MyRouter.login);
       var prefs = await SharedPreferences.getInstance();
       var user = UserModelUI(
-          id: userId, name: name, phoneNumber: phoneNumber ?? "", birth: birth);
+        id: userCredential.uid,
+        name: userCredential.displayName ?? "",
+        photoUrl: userCredential.photoURL??"",
+        createdAt: DateTime.now().millisecondsSinceEpoch.toString(),
+      );
       String userJson = jsonEncode(user.toJson());
       prefs.setString('userData', userJson);
       GlobalData().user = user;
@@ -61,43 +63,39 @@ class FirebaseAuthService implements IFirebaseAuthService {
   }
 
   @override
-  Future signInWithGoogle() async {
+  Future<void> signInWithGoogle() async {
     // Trigger the authentication flow
-    final googleUser = await GoogleSignIn().signIn();
-    if (googleUser == null) return;
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
     // Obtain the auth details from the request
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
 
     // Create a new credential
     final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
     );
 
     // Once signed in, return the UserCredential
-    UserCredential userCredential =
-        await FirebaseAuth.instance.signInWithCredential(credential);
+    var userCredential =
+        (await FirebaseAuth.instance.signInWithCredential(credential)).user;
 
-    var ref = await _firestore
-        .collection("users")
-        .where("userId", isEqualTo: userCredential.user?.uid)
-        .get();
-    var x = ref.docs.isEmpty;
-    //     .then((a) async {
-    //   if (a.docs.g ==null)
-    //     await _createUser(
-    //         userCredential.user!.uid,
-    //         userCredential.user!.displayName!,
-    //         userCredential.user!.phoneNumber!,
-    //         "");
-    // });
-    if (ref.docs.isEmpty) {
-      await _createUser(
-          userCredential.user!.uid,
-          userCredential.user!.displayName!,
-          userCredential.user!.phoneNumber,
-          "");
+    if (userCredential != null) {
+      final QuerySnapshot result = await _firestore
+          .collection('users')
+          .where('uid', isEqualTo: userCredential.uid)
+          .get();
+      final List<DocumentSnapshot> documents = result.docs;
+      if (documents.length == 0) {
+        // Writing data to server because here is a new user
+        _firestore.collection('users').doc(userCredential.uid).set({
+          'name': userCredential.displayName,
+          'photoUrl': userCredential.photoURL,
+          'uid': userCredential.uid,
+          'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
+        });
+      }
     }
     Get.toNamed(MyRouter.chatList);
   }

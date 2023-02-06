@@ -1,27 +1,27 @@
 class UserModelUI {
   final String id;
   final String name;
-  final String phoneNumber;
-  final String birth;
+  final String photoUrl;
+  final String createdAt;
   UserModelUI(
       {required this.id,
       required this.name,
-      required this.phoneNumber,
-      required this.birth});
+      required this.photoUrl,
+      required this.createdAt});
 
   UserModelUI.fromJson(Map<String, Object?> json)
       : this(
-          id: json['userId']! as String,
+          id: json['uid']! as String,
           name: json['name']! as String,
-          phoneNumber: json['phoneNumber']! as String,
-          birth: json['birth']! as String,
+          photoUrl: json['photoUrl']! as String,
+          createdAt: json['createdAt']! as String,
         );
   Map<String, Object?> toJson() {
     return {
-      'id': id,
+      'uid': id,
       'name': name,
-      'phoneNumber': phoneNumber,
-      'birth': birth,
+      'photoUrl': photoUrl,
+      'createdAt': createdAt,
     };
   }
 }

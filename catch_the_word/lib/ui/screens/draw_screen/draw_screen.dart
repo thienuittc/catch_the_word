@@ -1,5 +1,9 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -70,8 +74,14 @@ class _DrawScreenState extends State<DrawScreen> {
             onPressed: _controller.clear),
         IconButton(
             icon: Icon(Icons.check),
-            onPressed: () {
+            onPressed: () async {
               final storageRef = FirebaseStorage.instance.ref();
+              //final storageRef = FirebaseStorage.instance.ref();
+              var x = await _controller.finish().toPNG();
+              var b = base64.encode(x);
+              Reference reference = storageRef.child('fileName');
+              // File image = await File(x).create(); 
+              // UploadTask uploadTask = reference.putFile(image);
               Get.offNamed(MyRouter.home,
                   arguments:
                       HomeScreenArguments(picture: _controller.finish()));
