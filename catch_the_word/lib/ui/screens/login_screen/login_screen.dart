@@ -158,24 +158,24 @@ class __LoginState extends State<_Login> {
                   SizedBox(
                     height: 20.h,
                   ),
-                  Center(
-                      child: Text(
-                    "Or",
-                    style: TextStyle(
-                        fontSize: 16.h,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w100),
-                  )),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  CustomButton(
-                    color: Colors.amber,
-                    text: "Guest Login",
-                    onPressed: () async {
-                      await locator<IFirebaseAuthService>().signInAnonymously();
-                    },
-                  ),
+                  // Center(
+                  //     child: Text(
+                  //   "Or",
+                  //   style: TextStyle(
+                  //       fontSize: 16.h,
+                  //       color: Colors.grey,
+                  //       fontWeight: FontWeight.w100),
+                  // )),
+                  // SizedBox(
+                  //   height: 20.h,
+                  // ),
+                  // CustomButton(
+                  //   color: Colors.amber,
+                  //   text: "Guest Login",
+                  //   onPressed: () async {
+                  //     await locator<IFirebaseAuthService>().signInAnonymously();
+                  //   },
+                  // ),
                   SizedBox(
                     height: 20.h,
                   ),

@@ -33,7 +33,8 @@ class DrawScreen extends StatefulWidget {
 class _DrawScreenState extends State<DrawScreen> {
   bool _finished = false;
   PainterController _controller = _newController();
-
+  TextEditingController _keywordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   @override
   void initState() {
     super.initState();
@@ -83,11 +84,15 @@ class _DrawScreenState extends State<DrawScreen> {
         IconButton(
             icon: Icon(Icons.check),
             onPressed: () async {
-              var x = await _controller.finish().toPNG();
-              var b = base64.encode(x);
-              await locator<IFirebaseMessageService>().sendMessage(b,
-                  widget.arguments.currentUserId, widget.arguments.groupId, 2);
-              Get.back();
+              if (_formKey.currentState!.validate()) {
+                var x = await _controller.finish().toPNG();
+                var b = base64.encode(x);
+                await locator<IFirebaseMessageService>().sendImage(
+                    b,
+                    widget.arguments.currentUserId,
+                    widget.arguments.groupId);
+                Get.back();
+              }
             }),
       ];
     }
@@ -103,16 +108,86 @@ class _DrawScreenState extends State<DrawScreen> {
       body: Column(
         children: [
           Padding(
-            padding: EdgeInsets.only(top: 20.h),
+            padding: EdgeInsets.all(20.r),
             child: Column(
               children: [
                 Text(
                   "Keyword :\n",
                   style: TextStyle(fontSize: 26.sp),
                 ),
-                Text(
-                  context.read<IQuestionViewModel>().correctAnswer,
-                  style: TextStyle(fontSize: 30.sp),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Form(
+                    key: _formKey,
+                    child: Directionality(
+                      textDirection: TextDirection.rtl,
+                      child: TextFormField(
+                        onTap: () {
+                          Get.dialog(
+                            barrierDismissible: false,
+                            Center(
+                              child: SizedBox(
+                                height: 240.h,
+                                width: 335.w,
+                                child: Column(
+                                  children: [
+                                    Card(
+                                      child: Padding(
+                                        padding: EdgeInsets.all(16.r),
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              "Keyword :\n",
+                                              style: TextStyle(fontSize: 26.sp),
+                                            ),
+                                            TextField(
+                                              textAlign: TextAlign.center,
+                                              controller: _keywordController,
+                                              decoration: InputDecoration(
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                        vertical: 20.r,
+                                                        horizontal: 10.r),
+                                                hintText:
+                                                    'Please enter key word...',
+                                              ),
+                                            ),
+                                            TextButton(
+                                                onPressed: () {
+                                                  if (_formKey.currentState!
+                                                      .validate()) {
+                                                    Get.back();
+                                                  }
+                                                },
+                                                child: Text("OK"))
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 30.sp),
+                        readOnly: true,
+                        controller: _keywordController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter keyword';
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 20.r, horizontal: 10.r),
+                          hintText: 'Please enter key word...',
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),

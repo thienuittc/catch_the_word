@@ -74,10 +74,10 @@ class QuestionViewModel extends ChangeNotifier implements IQuestionViewModel {
             transitionDuration: const Duration(seconds: 1),
             transitionCurve: Curves.easeInOutCirc);
         await soundEffect.play(correctSoundId!);
-        //await soundEffect.release(correctSoundId!);
-        // await audioCache.play(_correctSoundPath,
-        //     mode: PlayerMode.LOW_LATENCY, volume: 0.7);
-        await Future.delayed(const Duration(seconds: 5), () => Get.back());
+        await Future.delayed(const Duration(seconds: 5), () {
+          Get.back();
+          Get.back();
+        });
       } else {
         Get.dialog(
             Container(

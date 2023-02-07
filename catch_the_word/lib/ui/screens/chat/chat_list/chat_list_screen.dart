@@ -34,7 +34,7 @@ class _ChatListScreen extends StatelessWidget {
             child: Column(
           children: [
             TextButton(
-                child: Text("title"),
+                child: Text("Friend list"),
                 onPressed: () {
                   locator<IFirebaseMessageService>().chatList();
                 }),

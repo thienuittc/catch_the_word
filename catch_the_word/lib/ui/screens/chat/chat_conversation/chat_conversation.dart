@@ -77,7 +77,14 @@ class _ChatConversationState extends State<_ChatConversation> {
             child: TextField(
               controller: _messageController,
               focusNode: _messageFocusNode,
-              decoration: InputDecoration.collapsed(
+              decoration: InputDecoration(
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 20.r, horizontal: 10.r),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(
+                    16.r,
+                  ),
+                ),
                 hintText: 'Your message here...',
               ),
               onChanged: (value) {
@@ -165,7 +172,7 @@ class _ChatConversationState extends State<_ChatConversation> {
                                         ),
                                       )
                                     : _Image(
-                                        base64String: docs[index]['message']),
+                                        imageId: docs[index]['message']),
                               ),
                             ),
                             const SizedBox(height: 4.0),
@@ -198,7 +205,7 @@ class _ChatConversationState extends State<_ChatConversation> {
                                         ),
                                       )
                                     : _Image(
-                                        base64String: docs[index]['message']),
+                                        imageId: docs[index]['message']),
                               ),
                             ),
                             const SizedBox(height: 4.0),
@@ -220,19 +227,23 @@ class _ChatConversationState extends State<_ChatConversation> {
 }
 
 class _Image extends StatelessWidget {
-  const _Image({super.key, required this.base64String});
-  final String base64String;
+  const _Image({super.key, required this.imageId});
+  final String imageId;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Get.toNamed(MyRouter.home,
-          arguments: HomeScreenArguments(picture: base64.decode(base64String))),
+      onTap: () async {
+        var image = await locator<IFirebaseMessageService>().getImage(imageId);
+        Get.toNamed(MyRouter.home,
+            arguments:
+                HomeScreenArguments(picture: base64.decode(image)));
+      },
       child: Container(
         width: 100.r,
         height: 100.r,
         color: Colors.amber,
-        child: Image.memory(base64.decode(base64String)),
+        child: Text("?"),
       ),
     );
   }
