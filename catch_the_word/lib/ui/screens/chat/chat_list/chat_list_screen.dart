@@ -1,3 +1,4 @@
+import 'package:catch_the_word/core/global/global_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -22,51 +23,57 @@ class _ChatListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        title: Text("Chats"),
-      ),
-      body: SingleChildScrollView(
-          child: Column(
-        children: [
-          TextButton(
-              child: Text("title"),
-              onPressed: () {
-                locator<IFirebaseMessageService>().chatList();
-              }),
-          StreamBuilder<QuerySnapshot<UserModelUI>>(
-              stream: locator<IFirebaseMessageService>().chatList().snapshots(),
-              builder: (BuildContext context, snapshot) {
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Text(snapshot.error.toString()),
-                  );
-                }
+    return WillPopScope(
+      onWillPop: () => Future.value(false),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          title: Text("Chats"),
+        ),
+        body: SingleChildScrollView(
+            child: Column(
+          children: [
+            TextButton(
+                child: Text("title"),
+                onPressed: () {
+                  locator<IFirebaseMessageService>().chatList();
+                }),
+            StreamBuilder<QuerySnapshot<UserModelUI>>(
+                stream:
+                    locator<IFirebaseMessageService>().chatList().snapshots(),
+                builder: (BuildContext context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(snapshot.error.toString()),
+                    );
+                  }
 
-                if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                final data = snapshot.requireData;
+                  if (!snapshot.hasData) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  final data = snapshot.requireData;
 
-                return Column(
-                  children: data.docs
-                      .map(
-                        (e) => GestureDetector(
-                          onTap: () {
-                            Get.toNamed(MyRouter.chatConversation,
-                                arguments: e.data());
-                          },
-                          child: ListTile(
-                            title: Text(e.data().name),
+                  return Column(
+                    children: data.docs
+                        .where((element) =>
+                            element.data().id != locator<GlobalData>().user.id)
+                        .map(
+                          (e) => GestureDetector(
+                            onTap: () {
+                              Get.toNamed(MyRouter.chatConversation,
+                                  arguments: e.data());
+                            },
+                            child: ListTile(
+                              title: Text(e.data().name),
+                            ),
                           ),
-                        ),
-                      )
-                      .toList(),
-                );
-              }),
-        ],
-      )),
+                        )
+                        .toList(),
+                  );
+                }),
+          ],
+        )),
+      ),
     );
   }
 }

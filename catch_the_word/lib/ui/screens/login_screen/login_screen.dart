@@ -42,19 +42,6 @@ class __LoginState extends State<_Login> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _asyncMethod();
-    });
-  }
-
-  _asyncMethod() async {
-    final pref = await SharedPreferences.getInstance();
-    if (pref.getString('userData') != null) {
-      Map<String, Object?> json = jsonDecode(pref.getString('userData')!);
-      var user = UserModelUI.fromJson(json);
-      GlobalData().user = user;
-      Get.toNamed(MyRouter.chatList);
-    }
   }
 
   @override
@@ -66,166 +53,169 @@ class __LoginState extends State<_Login> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 20.h,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Login Account",
-                          style: TextStyle(fontSize: 28.sp),
-                        ),
-                        SizedBox(
-                          height: 10.h,
-                        ),
-                        Text(
-                          "Hello. welcome back to our account",
-                          style: TextStyle(
-                              fontSize: 16.sp,
-                              color: Colors.grey,
-                              fontWeight: FontWeight.w300),
-                        ),
-                      ],
-                    ),
-                    // Container(
-                    //   height: 100.r,
-                    //   width: 100.r,
-                    //   child: Lottie.asset(
-                    //       'assets/lottie_files/122255-spooky-pumpkin.json'),
-                    // ),
-                  ],
-                ),
-                SizedBox(
-                  height: 50.h,
-                ),
-                CustomTextField(
-                  keyboardType: TextInputType.emailAddress,
-                  controller: emailController,
-                  lable: "Email",
-                  prefixIcon: Icon(Icons.mail),
-                ),
-                SizedBox(
-                  height: 10.h,
-                ),
-                CustomTextField(
-                  obscureText: true,
-                  enabled: true,
-                  controller: passwordController,
-                  lable: "Password",
-                  prefixIcon: Icon(Icons.lock),
-                ),
-                SizedBox(
-                  height: 5.h,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Checkbox(
-                            value: _checkBox,
-                            onChanged: (value) {
-                              setState(() {
-                                _checkBox = value!;
-                              });
-                            }),
-                        Text(
-                          "Remember me",
-                        ),
-                      ],
-                    ),
-                    GestureDetector(
-                      onTap: () {},
-                      child: Text(
-                        "Forgot password?",
+    return WillPopScope(
+      onWillPop: () => Future.value(false),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Login Account",
+                            style: TextStyle(fontSize: 28.sp),
+                          ),
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                          Text(
+                            "Hello. welcome back to our account",
+                            style: TextStyle(
+                                fontSize: 16.sp,
+                                color: Colors.grey,
+                                fontWeight: FontWeight.w300),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 20.h,
-                ),
-                CustomButton(
-                  text: "Login",
-                  onPressed: () async {
-                    await locator<IFirebaseAuthService>()
-                        .signIn(emailController.text, passwordController.text);
-                  },
-                ),
-                SizedBox(
-                  height: 20.h,
-                ),
-                Center(
-                    child: Text(
-                  "Or",
-                  style: TextStyle(
-                      fontSize: 16.h,
-                      color: Colors.grey,
-                      fontWeight: FontWeight.w100),
-                )),
-                SizedBox(
-                  height: 20.h,
-                ),
-                CustomButton(
-                  color: Colors.amber,
-                  text: "Guest Login",
-                  onPressed: () async {
-                    await locator<IFirebaseAuthService>().signInAnonymously();
-                  },
-                ),
-                SizedBox(
-                  height: 20.h,
-                ),
-                Center(
-                    child: Text(
-                  "Or",
-                  style: TextStyle(
-                      fontSize: 16.h,
-                      color: Colors.grey,
-                      fontWeight: FontWeight.w100),
-                )),
-                SizedBox(
-                  height: 10.h,
-                ),
-                SignInButton(
-                  Buttons.Google,
-                  onPressed: () async {
-                    await locator<IFirebaseAuthService>().signInWithGoogle();
-                  },
-                ),
-                SizedBox(
-                  height: 20.h,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("Don't have an Account ? "),
-                    GestureDetector(
-                      onTap: () {
-                        Get.toNamed(MyRouter.signUp);
-                      },
-                      child: Text(
-                        "Create new account",
-                        style: TextStyle(color: Colors.blue, fontSize: 16.sp),
+                      // Container(
+                      //   height: 100.r,
+                      //   width: 100.r,
+                      //   child: Lottie.asset(
+                      //       'assets/lottie_files/122255-spooky-pumpkin.json'),
+                      // ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 50.h,
+                  ),
+                  CustomTextField(
+                    keyboardType: TextInputType.emailAddress,
+                    controller: emailController,
+                    lable: "Email",
+                    prefixIcon: Icon(Icons.mail),
+                  ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  CustomTextField(
+                    obscureText: true,
+                    enabled: true,
+                    controller: passwordController,
+                    lable: "Password",
+                    prefixIcon: Icon(Icons.lock),
+                  ),
+                  SizedBox(
+                    height: 5.h,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Checkbox(
+                              value: _checkBox,
+                              onChanged: (value) {
+                                setState(() {
+                                  _checkBox = value!;
+                                });
+                              }),
+                          Text(
+                            "Remember me",
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      GestureDetector(
+                        onTap: () {},
+                        child: Text(
+                          "Forgot password?",
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                  CustomButton(
+                    text: "Login",
+                    onPressed: () async {
+                      await locator<IFirebaseAuthService>().signIn(
+                          emailController.text, passwordController.text);
+                    },
+                  ),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                  Center(
+                      child: Text(
+                    "Or",
+                    style: TextStyle(
+                        fontSize: 16.h,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w100),
+                  )),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                  CustomButton(
+                    color: Colors.amber,
+                    text: "Guest Login",
+                    onPressed: () async {
+                      await locator<IFirebaseAuthService>().signInAnonymously();
+                    },
+                  ),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                  Center(
+                      child: Text(
+                    "Or",
+                    style: TextStyle(
+                        fontSize: 16.h,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w100),
+                  )),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  SignInButton(
+                    Buttons.Google,
+                    onPressed: () async {
+                      await locator<IFirebaseAuthService>().signInWithGoogle();
+                    },
+                  ),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Don't have an Account ? "),
+                      GestureDetector(
+                        onTap: () {
+                          Get.toNamed(MyRouter.signUp);
+                        },
+                        child: Text(
+                          "Create new account",
+                          style: TextStyle(color: Colors.blue, fontSize: 16.sp),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

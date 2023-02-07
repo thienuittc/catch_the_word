@@ -7,4 +7,5 @@ abstract class IFirebaseAuthService {
   Future signInWithGoogle();
   Future<void> signInAnonymously();
   Future<void> signOut();
+  Future<void> getAndSetCurrenUser(User user);
 }

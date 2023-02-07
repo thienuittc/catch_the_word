@@ -11,13 +11,21 @@ import 'package:get/get.dart';
 import 'package:painter/painter.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/firebase/interfaces/ifirebase_message.dart';
+import '../../../core/global/locator.dart';
 import '../../../core/global/router.dart';
 import '../../../core/view_models/screen/interfaces/iquestion_viewmodel.dart';
 import '../home_screen/home_screen.dart';
 
-class DrawScreen extends StatefulWidget {
-  const DrawScreen({Key? key}) : super(key: key);
+class DrawScreenArguments {
+  final String groupId;
+  final String currentUserId;
+  DrawScreenArguments({required this.currentUserId, required this.groupId});
+}
 
+class DrawScreen extends StatefulWidget {
+  const DrawScreen({Key? key, required this.arguments}) : super(key: key);
+  final DrawScreenArguments arguments;
   @override
   _DrawScreenState createState() => _DrawScreenState();
 }
@@ -75,16 +83,11 @@ class _DrawScreenState extends State<DrawScreen> {
         IconButton(
             icon: Icon(Icons.check),
             onPressed: () async {
-              final storageRef = FirebaseStorage.instance.ref();
-              //final storageRef = FirebaseStorage.instance.ref();
               var x = await _controller.finish().toPNG();
               var b = base64.encode(x);
-              Reference reference = storageRef.child('fileName');
-              // File image = await File(x).create(); 
-              // UploadTask uploadTask = reference.putFile(image);
-              Get.offNamed(MyRouter.home,
-                  arguments:
-                      HomeScreenArguments(picture: _controller.finish()));
+              await locator<IFirebaseMessageService>().sendMessage(b,
+                  widget.arguments.currentUserId, widget.arguments.groupId, 2);
+              Get.back();
             }),
       ];
     }

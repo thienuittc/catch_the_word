@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ import 'widgets/empty_cross_word.dart';
 import 'widgets/header.dart';
 
 class HomeScreenArguments {
-  final PictureDetails picture;
+  final Uint8List picture;
   HomeScreenArguments({required this.picture});
 }
 
@@ -55,29 +56,7 @@ class __HomeScreenState extends State<_HomeScreen> {
           Expanded(
             child: Container(
               alignment: Alignment.center,
-              child:
-                FutureBuilder<Uint8List>(
-                  future: widget.arguments.picture.toPNG(),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<Uint8List> snapshot) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.done:
-                        if (snapshot.hasError) {
-                          return Text('Error: ${snapshot.error}');
-                        } else {
-                          return Image.memory(snapshot.data!);
-                        }
-                      default:
-                        return const FractionallySizedBox(
-                          widthFactor: 0.1,
-                          child: AspectRatio(
-                              aspectRatio: 1.0,
-                              child: CircularProgressIndicator()),
-                          alignment: Alignment.center,
-                        );
-                    }
-                  },
-              ),
+              child: Image.memory(widget.arguments.picture),
             ),
           ),
           Padding(

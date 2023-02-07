@@ -11,10 +11,10 @@ class UserModelUI {
 
   UserModelUI.fromJson(Map<String, Object?> json)
       : this(
-          id: json['uid']! as String,
-          name: json['name']! as String,
-          photoUrl: json['photoUrl']! as String,
-          createdAt: json['createdAt']! as String,
+          id: json['uid'] as String,
+          name: json['name'] as String,
+          photoUrl: json['photoUrl'] as String,
+          createdAt: json['createdAt'] as String,
         );
   Map<String, Object?> toJson() {
     return {

@@ -20,7 +20,7 @@ class FirebaseMessageService implements IFirebaseMessageService {
 
   @override
   Future<void> sendMessage(
-      String message, String senderId, String groupId) async {
+      String message, String senderId, String groupId,int type) async {
     await _firestore
         .collection(_collection)
         .doc("groupId")
@@ -28,6 +28,7 @@ class FirebaseMessageService implements IFirebaseMessageService {
         .add({
       'senderId': senderId,
       'message': message,
+      'type':type,
       'time': DateTime.now(),
     });
   }

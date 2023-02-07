@@ -56,7 +56,7 @@ class _MyAppState extends State<MyApp> {
         builder: (_, __) => GetMaterialApp(
           title: 'Catch the word',
           onGenerateRoute: (settings) => MyRouter.generateRoute(settings),
-          initialRoute: MyRouter.login,
+          initialRoute: MyRouter.splash,
           theme: ThemeData(
             primarySwatch: Colors.blue,
             scaffoldBackgroundColor: Colors.white,

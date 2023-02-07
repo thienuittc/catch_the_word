@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:catch_the_word/ui/screens/splash_screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:painter/painter.dart';
 
@@ -18,6 +19,7 @@ class MyRouter {
   static const String signUp = '/signUp';
   static const String chatConversation = '/chatConversation';
   static const String chatList = '/chatList';
+  static const String splash = '/splash';
 
   static PageRouteBuilder _buildRouteNavigationWithoutEffect(
       RouteSettings settings, Widget widget) {
@@ -48,7 +50,7 @@ class MyRouter {
       case draw:
         return _buildRouteNavigationWithoutEffect(
           settings,
-          const DrawScreen(),
+           DrawScreen( arguments: settings.arguments as DrawScreenArguments,),
         );
       case login:
         return _buildRouteNavigationWithoutEffect(
@@ -71,6 +73,11 @@ class MyRouter {
         return _buildRouteNavigationWithoutEffect(
           settings,
           const ChatListScreen(),
+        );
+      case splash:
+        return _buildRouteNavigationWithoutEffect(
+          settings,
+          const Splash(),
         );
       default:
         return _buildRouteNavigationWithoutEffect(
