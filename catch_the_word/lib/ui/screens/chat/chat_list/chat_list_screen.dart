@@ -59,7 +59,7 @@ class _ChatListScreen extends StatelessWidget {
                             element.data().id != locator<GlobalData>().user.id)
                         .map(
                           (e) => GestureDetector(
-                            onTap: () {
+                            onTap: () {                              
                               Get.toNamed(MyRouter.chatConversation,
                                   arguments: e.data());
                             },

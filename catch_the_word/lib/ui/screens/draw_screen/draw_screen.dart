@@ -89,6 +89,7 @@ class _DrawScreenState extends State<DrawScreen> {
                 var b = base64.encode(x);
                 await locator<IFirebaseMessageService>().sendImage(
                     b,
+                    _keywordController.text,
                     widget.arguments.currentUserId,
                     widget.arguments.groupId);
                 Get.back();

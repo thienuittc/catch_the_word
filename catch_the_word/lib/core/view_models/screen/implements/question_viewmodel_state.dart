@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:audio_helper/audio_helper.dart';
+import 'package:catch_the_word/core/firebase/interfaces/ifirebase_message.dart';
+import 'package:catch_the_word/core/global/locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -21,17 +23,16 @@ class QuestionViewModel extends ChangeNotifier implements IQuestionViewModel {
   final soundEffect = BetterSoundEffect();
   late int? correctSoundId;
   late int? failedSoundId;
+  late String _groupId;
+  late String _messageId;
+  IFirebaseMessageService _iFirebaseMessageService =
+      locator<IFirebaseMessageService>();
   @override
   int get correctAnswerLength => correctAnswer.length;
 
   static const String _chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   final Random _rnd = Random();
-  static String _correctAnswer = [
-    'hello',
-    'hi',
-    '1'
-  ][Random().nextInt(['hello', 'hi', '1'].length)]
-      .toUpperCase();
+  static String _correctAnswer = '';
   String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
       length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
 
@@ -74,6 +75,7 @@ class QuestionViewModel extends ChangeNotifier implements IQuestionViewModel {
             transitionDuration: const Duration(seconds: 1),
             transitionCurve: Curves.easeInOutCirc);
         await soundEffect.play(correctSoundId!);
+        await _iFirebaseMessageService.updateMessage(_groupId, _messageId);
         await Future.delayed(const Duration(seconds: 5), () {
           Get.back();
           Get.back();
@@ -118,6 +120,24 @@ class QuestionViewModel extends ChangeNotifier implements IQuestionViewModel {
   void clearAll() {
     _keyboardAnswer.map((e) => e.isSelected = false).toList();
     _answer.clear();
+    notifyListeners();
+  }
+
+  @override
+  set setCorrectAnswer(String correctAnswer) {
+    _correctAnswer = correctAnswer.toUpperCase();
+    notifyListeners();
+  }
+
+  @override
+  set setMessageId(String messageId) {
+    _messageId = messageId;
+    notifyListeners();
+  }
+
+  @override
+  set setGroupId(String groupId) {
+    _groupId = groupId;
     notifyListeners();
   }
 }

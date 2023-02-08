@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
+import 'package:catch_the_word/core/model_ui/image_ui_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:painter/painter.dart';
@@ -14,7 +15,7 @@ import 'widgets/empty_cross_word.dart';
 import 'widgets/header.dart';
 
 class HomeScreenArguments {
-  final Uint8List picture;
+  final ImageUIModel picture;
   HomeScreenArguments({required this.picture});
 }
 
@@ -36,10 +37,15 @@ class _HomeScreen extends StatefulWidget {
 }
 
 class __HomeScreenState extends State<_HomeScreen> {
+  late IQuestionViewModel viewModel;
   @override
   void initState() {
     Future.delayed(Duration.zero, () async {
-      context.read<IQuestionViewModel>().init();
+      late IQuestionViewModel viewModel = context.read<IQuestionViewModel>();
+      viewModel.init();
+      viewModel.setCorrectAnswer = widget.arguments.picture.keyword;
+      viewModel.setGroupId = widget.arguments.picture.groupId!;
+      viewModel.setMessageId = widget.arguments.picture.messageId!;
     });
     super.initState();
   }
@@ -56,7 +62,8 @@ class __HomeScreenState extends State<_HomeScreen> {
           Expanded(
             child: Container(
               alignment: Alignment.center,
-              child: Image.memory(widget.arguments.picture),
+              child:
+                  Image.memory(base64.decode(widget.arguments.picture.image)),
             ),
           ),
           Padding(

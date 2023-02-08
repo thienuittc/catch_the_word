@@ -43,6 +43,7 @@ class FirebaseAuthService implements IFirebaseAuthService {
         photoUrl: user.user!.photoURL ?? "",
         createdAt: DateTime.now().millisecondsSinceEpoch.toString(),
       ));
+      Get.toNamed(MyRouter.login);
     }).catchError((onError) {
       Get.snackbar("SignUp failed!", onError);
     });

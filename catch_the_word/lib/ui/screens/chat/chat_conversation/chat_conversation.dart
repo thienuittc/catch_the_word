@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/firebase/interfaces/ifirebase_message.dart';
 import '../../../../core/global/locator.dart';
+import '../../../../core/model_ui/image_ui_model.dart';
 import '../../../../core/model_ui/user_ui_model.dart';
 import '../../../base_screen/base_screen.dart';
 import '../../draw_screen/draw_screen.dart';
@@ -172,7 +173,11 @@ class _ChatConversationState extends State<_ChatConversation> {
                                         ),
                                       )
                                     : _Image(
-                                        imageId: docs[index]['message']),
+                                        messageId: docs[index].id,
+                                        imageId: docs[index]['message'],
+                                        isRead: docs[index]['isRead'] == '1',
+                                        groupId: groupChatId,
+                                      ),
                               ),
                             ),
                             const SizedBox(height: 4.0),
@@ -205,7 +210,11 @@ class _ChatConversationState extends State<_ChatConversation> {
                                         ),
                                       )
                                     : _Image(
-                                        imageId: docs[index]['message']),
+                                        messageId: docs[index].id,
+                                        imageId: docs[index]['message'],
+                                        isRead: docs[index]['isRead'] == '1',
+                                        groupId: groupChatId,
+                                      ),
                               ),
                             ),
                             const SizedBox(height: 4.0),
@@ -227,23 +236,35 @@ class _ChatConversationState extends State<_ChatConversation> {
 }
 
 class _Image extends StatelessWidget {
-  const _Image({super.key, required this.imageId});
+  const _Image({
+    super.key,
+    required this.imageId,
+    required this.isRead,
+    required this.messageId,
+    required this.groupId,
+  });
   final String imageId;
+  final bool isRead;
+  final String messageId;
+  final String groupId;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        var image = await locator<IFirebaseMessageService>().getImage(imageId);
+        ImageUIModel image =
+            await locator<IFirebaseMessageService>().getImage(imageId);
+        image.messageId = messageId;
+        image.groupId = groupId;
         Get.toNamed(MyRouter.home,
-            arguments:
-                HomeScreenArguments(picture: base64.decode(image)));
+            arguments: HomeScreenArguments(
+                picture: image));
       },
       child: Container(
         width: 100.r,
         height: 100.r,
         color: Colors.amber,
-        child: Text("?"),
+        child: Center(child: Text("?")),
       ),
     );
   }
